@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabs estilo carpeta</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #b185c4;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .tabs-container {
+      background: #f5eaf7;
+      border: 2px solid #d19cd2;
+      border-radius: 10px;
+      width: 600px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .tabs {
+      display: flex;
+      position: relative;
+      background: #d19cd2;
+      border-bottom: 2px solid #d19cd2;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background: #f5eaf7;
+      border: 2px solid #d19cd2;
+      border-bottom: none;
+      margin-right: 5px;
+      border-radius: 10px 10px 0 0;
+      transition: transform 0.3s, background-color 0.3s;
+    }
+
+    .tab:hover {
+      background-color: #e3c1e8;
+      transform: translateY(-5px);
+    }
+
+    .tab.active {
+      background: #ffffff;
+      font-weight: bold;
+      transform: translateY(-5px);
+    }
+
+    .tab-content {
+      padding: 20px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .tab-content.hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="tabs-container">
+    <div class="tabs">
+      <div class="tab active" data-tab="work">WORK STUFF</div>
+      <div class="tab" data-tab="food">FOOD</div>
+      <div class="tab" data-tab="baking">BAKING</div>
+      <div class="tab" data-tab="cat">CAT</div>
+    </div>
+    <div class="tab-content" id="work">Content related to work stuff goes here.</div>
+    <div class="tab-content hidden" id="food">Content related to food goes here.</div>
+    <div class="tab-content hidden" id="baking">Content related to baking goes here.</div>
+    <div class="tab-content hidden" id="cat">Content related to cats goes here.</div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs
+        tabs.forEach(t => t.classList.remove('active'));
+        // Hide all content
+        contents.forEach(content => content.classList.add('hidden'));
+
+        // Add active class to clicked tab
+        tab.classList.add('active');
+        // Show related content
+        const target = tab.getAttribute('data-tab');
+        document.getElementById(target).classList.remove('hidden');
+      });
+    });
+  </script>
+</body>
+</html>
