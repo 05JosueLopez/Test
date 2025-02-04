@@ -1,13 +1,83 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recorrido Interactivo</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav {
+            background: #3498db;
+            padding: 15px;
+            color: white;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        section {
+            margin: 20px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            display: inline-block;
+            width: 30%;
+            position: relative;
+        }
+
+        /* 🔥 Resaltado dinámico */
+        .highlight {
+            position: relative;
+            border: 3px solid #f39c12 !important;
+            box-shadow: 0px 0px 15px rgba(243, 156, 18, 0.7);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Tooltip */
+        #tooltip {
+            position: absolute;
+            background: #000;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            font-size: 0.9em;
+        }
+
+        /* Fondo oscuro para el recorrido */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            z-index: 10;
+        }
+
+        /* Flecha indicativa */
+        .arrow {
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid #f39c12;
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
 </head>
 <body>
-
 
     <div id="overlay"></div>
 
@@ -21,131 +91,72 @@
     <main>
         <section id="dashboard">
             <h2>Bienvenido al Dashboard</h2>
-            <p>Aquí puedes ver tus proyectos recientes.</p>
+            <button id="btn-dashboard">Ver Proyectos</button>
         </section>
 
         <section id="editor">
             <h2>Editor</h2>
-            <p>Usa esta sección para crear nuevos diseños.</p>
+            <button id="btn-editor">Crear Diseño</button>
         </section>
 
         <section id="config">
             <h2>Configuración</h2>
-            <p>Modifica tus preferencias aquí.</p>
+            <button id="btn-config">Preferencias</button>
         </section>
     </main>
 
-    <div id="tooltip"></div>
+    <div id="tooltip">
+        <div class="arrow"></div>
+        <span id="tooltip-text"></span>
+    </div>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const steps = [
+                { id: "btn-dashboard", text: "Haz clic aquí para ver tus proyectos recientes." },
+                { id: "btn-editor", text: "Clic aquí para empezar un nuevo diseño." },
+                { id: "btn-config", text: "Accede a la configuración para cambiar tus preferencias." }
+            ];
+
+            let stepIndex = 0;
+            const overlay = document.getElementById("overlay");
+            const tooltip = document.getElementById("tooltip");
+            const tooltipText = document.getElementById("tooltip-text");
+
+            function showStep(index) {
+                if (index >= steps.length) {
+                    overlay.style.display = "none";
+                    tooltip.style.display = "none";
+                    return;
+                }
+
+                overlay.style.display = "block";
+
+                const step = steps[index];
+                const element = document.getElementById(step.id);
+
+                element.classList.add("highlight");
+
+                const rect = element.getBoundingClientRect();
+                tooltip.style.display = "block";
+                tooltip.style.top = `${rect.top + window.scrollY - 50}px`;
+                tooltip.style.left = `${rect.left + rect.width / 2 - tooltip.offsetWidth / 2}px`;
+                tooltipText.innerText = step.text;
+
+                function handleClick() {
+                    element.classList.remove("highlight");
+                    element.removeEventListener('click', handleClick);
+                    showStep(index + 1);
+                }
+
+                element.addEventListener('click', handleClick);
+            }
+
+            setTimeout(() => {
+                showStep(stepIndex);
+            }, 500);
+        });
+    </script>
 
 </body>
 </html>
-
-
-
-<style>
-
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-}
-
-nav {
-    background: #3498db;
-    padding: 15px;
-    color: white;
-}
-
-main {
-    padding: 20px;
-}
-
-section {
-    margin: 20px;
-    padding: 20px;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    display: inline-block;
-    width: 30%;
-}
-
-/* 🔥 Resaltado dinámico */
-.highlight {
-    position: relative;
-    border: 3px solid #f39c12 !important;
-    box-shadow: 0px 0px 15px rgba(243, 156, 18, 0.7);
-    transition: all 0.3s ease-in-out;
-}
-
-/* Tooltip */
-#tooltip {
-    position: absolute;
-    background: #000;
-    color: #fff;
-    padding: 10px;
-    border-radius: 5px;
-    display: none;
-}
-
-/* Fondo oscuro para el recorrido */
-#overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: none;
-}
-
-
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const steps = [
-        { id: "dashboard", text: "Aquí puedes ver tus proyectos recientes." },
-        { id: "editor", text: "Este es el editor donde puedes trabajar en tus ideas." },
-        { id: "config", text: "En configuración puedes cambiar tus preferencias." }
-    ];
-
-    let stepIndex = 0;
-    const overlay = document.getElementById("overlay");
-    const tooltip = document.getElementById("tooltip");
-
-    function showStep(index) {
-        if (index >= steps.length) {
-            overlay.style.display = "none";
-            tooltip.style.display = "none";
-            return;
-        }
-
-        overlay.style.display = "block";
-
-        const step = steps[index];
-        const element = document.getElementById(step.id);
-        
-        element.classList.add("highlight");
-
-        const rect = element.getBoundingClientRect();
-        tooltip.style.display = "block";
-        tooltip.style.top = `${rect.top + window.scrollY - 40}px`;
-        tooltip.style.left = `${rect.left + rect.width / 2}px`;
-        tooltip.innerText = step.text;
-
-        setTimeout(() => {
-            element.classList.remove("highlight");
-            showStep(index + 1);
-        }, 2000);
-    }
-
-    setTimeout(() => {
-        showStep(stepIndex);
-    }, 1000);
-});
-
-
-</script>
